@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +55,15 @@ public class ProductoREST {
 	@GetMapping (value = "{id}")
 	private ResponseEntity<Optional<Producto>> listarPersonasPorID (@PathVariable ("id") Long id){
 		return ResponseEntity.ok(productoService.findById(id));
+	}
+	@PutMapping
+	public ResponseEntity<Producto> actualizar(@RequestBody Producto producto) {
+	    Producto updatedProducto = productoService.update(producto);
+	    if (updatedProducto != null) {
+	        return ResponseEntity.ok(updatedProducto);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 	
 
