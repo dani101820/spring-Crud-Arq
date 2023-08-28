@@ -56,15 +56,15 @@ public class ProductoREST {
 	private ResponseEntity<Optional<Producto>> listarPersonasPorID (@PathVariable ("id") Long id){
 		return ResponseEntity.ok(productoService.findById(id));
 	}
-	@PutMapping
-	public ResponseEntity<Producto> actualizar(@RequestBody Producto producto) {
-	    Producto updatedProducto = productoService.update(producto);
-	    if (updatedProducto != null) {
-	        return ResponseEntity.ok(updatedProducto);
-	    } else {
-	        return ResponseEntity.notFound().build();
+	 @PutMapping("{id}")
+	    private ResponseEntity<Producto> actualizarProducto(@PathVariable("id") Long id, @RequestBody Producto producto) {
+	        Producto updatedProducto = productoService.update(id, producto);
+	        if (updatedProducto != null) {
+	            return ResponseEntity.ok(updatedProducto);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	        }
 	    }
-	}
 	
 
 }

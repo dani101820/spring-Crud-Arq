@@ -32,15 +32,16 @@ public class ProductoService {
 	public Optional<Producto> findById (Long id) {
 		return productoResporitory.findById(id);
 	}
-	public Producto update (Producto producto) {
-	    if (productoResporitory.findById(producto.getId()).isPresent()) {
-	        return productoResporitory.save(producto);
+	 public Producto update(Long id, Producto producto) {
+	        if(productoResporitory.findById(id).isPresent()) {
+	            producto.setId(id);
+	            return productoResporitory.save(producto);
+	        }
+	        else {
+	            // Aquí podrías lanzar una excepción o manejarlo de otra forma
+	            return null;
+	        }
 	    }
-	    else {
-	        // Lanzar una excepción o devolver null si el producto no se encuentra
-	        return null;
-	    }
-	}
 	
 
 }

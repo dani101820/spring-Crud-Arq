@@ -14,15 +14,22 @@ public class Producto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	private String nombre;
-	private String apellido;
-	private String correo;
-	public Producto(Long id, String nombre, String apellido, String correo) {
+	private Long codigoEan;
+	private String nombreDelProducto;
+	private String descripcionDelProducto;
+	private String marcaArtesania;
+	
+	public Producto() {
+    }
+
+	public Producto(Long id, Long codigoEan, String nombreDelProducto, String descripcionDelProducto,
+			String marcaArtesania) {
 		super();
 		this.id = id;
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.correo = correo;
+		this.codigoEan = codigoEan;
+		this.nombreDelProducto = nombreDelProducto;
+		this.descripcionDelProducto = descripcionDelProducto;
+		this.marcaArtesania = marcaArtesania;
 	}
 	public Long getId() {
 		return id;
@@ -30,23 +37,33 @@ public class Producto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getNombre() {
-		return nombre;
+	public Long getCodigoEan() {
+		return codigoEan;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setCodigoEan(Long codigoEan) {
+		this.codigoEan = codigoEan;
 	}
-	public String getApellido() {
-		return apellido;
+	public String getNombreDelProducto() {
+		return nombreDelProducto;
 	}
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
+	public void setNombreDelProducto(String nombreDelProducto) {
+		this.nombreDelProducto = nombreDelProducto;
 	}
-	public String getCorreo() {
-		return correo;
+	public String getDescripcionDelProducto() {
+		return descripcionDelProducto;
 	}
-	public void setCorreo(String correo) {
-		this.correo = correo;
+	public void setDescripcionDelProducto(String descripcionDelProducto) {
+		this.descripcionDelProducto = descripcionDelProducto;
 	}
+	public String getMarcaArtesania() {
+		return marcaArtesania;
+	}
+	public void setMarcaArtesania(String marcaArtesania) {
+		this.marcaArtesania = marcaArtesania;
+	}
+	
+	
+	
+
 	
 }
