@@ -25,9 +25,10 @@ public class ProductoService {
 		return productoResporitory.findAll();
 	}
 	
-	public void delete (Producto producto) {
-		productoResporitory.delete(producto);
+	public void delete(Long id) {
+		productoResporitory.deleteById(id);
 	}
+	
 	
 	public Optional<Producto> findById (Long id) {
 		return productoResporitory.findById(id);

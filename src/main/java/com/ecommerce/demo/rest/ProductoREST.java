@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.ecommerce.demo.service.ProductoService;
 
 @RestController
 @RequestMapping ("/api/producto/")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProductoREST {
 	
 	@Autowired
@@ -46,9 +48,9 @@ public class ProductoREST {
 		return ResponseEntity.ok(productoService.getAllProducto());
 	}
 	
-	@DeleteMapping
-	private ResponseEntity<Void> eliminarProducto (@RequestBody Producto producto){
-		productoService.delete(producto);
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> eliminarProducto(@PathVariable("id") Long id){
+		productoService.delete(id);
 		return ResponseEntity.ok().build();
 	}
 	
@@ -56,15 +58,16 @@ public class ProductoREST {
 	private ResponseEntity<Optional<Producto>> listarPersonasPorID (@PathVariable ("id") Long id){
 		return ResponseEntity.ok(productoService.findById(id));
 	}
-	 @PutMapping("{id}")
-	    private ResponseEntity<Producto> actualizarProducto(@PathVariable("id") Long id, @RequestBody Producto producto) {
-	        Producto updatedProducto = productoService.update(id, producto);
-	        if (updatedProducto != null) {
-	            return ResponseEntity.ok(updatedProducto);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	        }
-	    }
+	@PutMapping("{id}")
+	private ResponseEntity<Producto> actualizarProducto(@PathVariable("id") Long id, @RequestBody Producto producto) {
+		Producto updatedProducto = productoService.update(id, producto);
+		if (updatedProducto != null) {
+			return ResponseEntity.ok(updatedProducto);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+	
 	
 
 }
