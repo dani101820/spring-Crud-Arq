@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Container, Row, Col, Form, Navbar, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Navbar, Row, Table } from "react-bootstrap";
 import './styles.css';
 
 
@@ -12,11 +12,19 @@ export default function Producto() {
     nombreDelProducto: "",
     descripcionDelProducto: "",
     marcaArtesania: "", unidadesDisponibles: "",
-    imagenProducto: ""
+    imagenProducto: "",
+    tipo: "",
+    detail: "",
+    correo: ""
 
 
   });
   const [showAddForm, setShowAddForm] = useState(false);
+  const showEdit = (producto) => {
+    setEditingProducto(producto.id); // Guarda el ID del producto que estás editando
+    setNewProducto(producto);
+    setShowAddForm(true);
+  }
 
   useEffect(() => {
     axios.get("http://localhost:8080/api/producto/")
@@ -38,8 +46,12 @@ export default function Producto() {
           descripcionDelProducto: "",
           marcaArtesania: "",
         });
+        setEditingProducto(null);
+        setShowAddForm(false);
       })
       .catch(error => console.log(error));
+    
+
   };
 
   const deleteProducto = (id) => {
@@ -55,17 +67,34 @@ export default function Producto() {
         setProductos(productos.map(producto =>
           producto.id === id ? response.data : producto
         ));
-        setEditingProducto(null);  // Cerrar el formulario de edición
+        setEditingProducto(null);
+        setShowAddForm(false);  // Cerrar el formulario de edición
       })
       .catch(error => console.log(error));
+   
   };
 
-
+  const profesiones = [
+    "Ingeniero de Software",
+    "Médico Cirujano",
+    "Abogado",
+    "Arquitecto",
+    "Psicólogo"
+  ];
+  
+  const programasUniversidad = [
+    "Ingeniería Informática",
+    "Medicina",
+    "Derecho",
+    "Arquitectura",
+    "Psicología"
+  ];
+  
 
   return (
     <Container fluid>
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Productos</Navbar.Brand>
+      <Navbar className ="px-3"bg="dark" variant="dark">
+        <Navbar.Brand  href="#home">Formulario</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Button variant="outline-light" onClick={() => setShowAddForm(!showAddForm)}>
@@ -74,141 +103,99 @@ export default function Producto() {
         </Navbar.Collapse>
       </Navbar>
       <Row>
-      {showAddForm && (
-        <Col>
-          <h1 className="custom-title">Productos</h1>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="number"
-                placeholder="Código EAN"
-                value={newProducto.codigoEan}
-                onChange={(e) => setNewProducto({ ...newProducto, codigoEan: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Nombre del Producto"
-                value={newProducto.nombreDelProducto}
-                onChange={(e) => setNewProducto({ ...newProducto, nombreDelProducto: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Descripción del Producto"
-                value={newProducto.descripcionDelProducto}
-                onChange={(e) => setNewProducto({ ...newProducto, descripcionDelProducto: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Marca"
-                value={newProducto.marcaArtesania}
-                onChange={(e) => setNewProducto({ ...newProducto, marcaArtesania: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Control
-                type="number"
-                placeholder="Unidades Disponibles"
-                value={newProducto.unidadesDisponibles}
-                onChange={(e) => setNewProducto({ ...newProducto, unidadesDisponibles: e.target.value })}
-              />
-            </Form.Group>
-            <Button className="custom-button" onClick={addProducto}>
-              Agregar Producto
-            </Button>
-          </Form>
-        </Col>
+        {showAddForm && (
+          <Col>
+            <h1 className="custom-title">Registro</h1>
+            <Form>
+
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="DNI"
+                  value={newProducto.codigoEan}
+                  onChange={(e) => setNewProducto({ ...newProducto, codigoEan: e.target.value })}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  as="select"
+                  value={newProducto.tipo}
+                  onChange={(e) => {
+                    setNewProducto({ ...newProducto, tipo: e.target.value, detail: "" });
+                  }}
+                >
+                  <option value="" disabled>Selecciona tipo</option>
+                  <option value="estudiante">Estudiante</option>
+                  <option value="profesor">Profesor</option>
+                </Form.Control>
+
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  as="select"
+                  disabled={newProducto.tipo?.length == 0 ? true : false}
+                  placeholder={newProducto.tipo?.length == 0 ? "Debe seleccionar que tipo de usuario es" : ""}
+                  value={newProducto.detail}
+                  onChange={(e) => setNewProducto({ ...newProducto, detail: e.target.value })}
+                >
+                  {newProducto.tipo === "profesor" && profesiones.map(profesion => (
+                    <option key={profesion} value={profesion}>{profesion}</option>
+                  ))}
+                  {newProducto.tipo?.length == 0 && (
+                    <option key={"profesion"} value={""}>{"Debe seleccionar un tipo"}</option>
+                  )}
+                  {newProducto.tipo === "estudiante" && programasUniversidad.map(programa => (
+                    <option key={programa} value={programa}>{programa}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="email"
+                  placeholder="Correo"
+                  value={newProducto.correo}
+                  onChange={(e) => setNewProducto({ ...newProducto, correo: e.target.value })}
+                />
+              </Form.Group>
+              <Button className="custom-button" onClick={editingProducto ? () => updateProducto(editingProducto, newProducto) : addProducto}>
+                {editingProducto ? 'Actualizar Producto' : 'Agregar Producto'}
+              </Button>
+
+            </Form>
+          </Col>
         )}
         <Table striped bordered hover className="mt-3">
-        <Col>
-          {/* Añadir la tabla aquí */}
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Código EAN</th>
-                <th scope="col">Marca</th>
-                <th scope="col">U. Disponibles</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productos.map((producto, index) => (
-                <>
+          <Col>
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">DNI</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Correo</th>
+                  <th scope="col">Detail</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map((producto, index) => (
                   <tr key={index}>
-                    <td>{producto.nombreDelProducto}</td>
-                    <td>{producto.descripcionDelProducto}</td>
                     <td>{producto.codigoEan}</td>
-                    <td>{producto.marcaArtesania}</td>
-                    <td>{producto.unidadesDisponibles}</td>
+                    <td>{producto.tipo}</td>
+                    <td>{producto.correo}</td>
+                    <td>{producto.detail}</td>
+                    
                     <td>
-                      <Button variant="info" onClick={() => setEditingProducto(producto)}>Editar</Button>
+                    <div className="d-flex justify-content-center g-3" style={{gap:10}}>
+                      <Button variant="info" onClick={() => showEdit(producto)}>Editar</Button>
                       <Button variant="danger" onClick={() => deleteProducto(producto.id)}>Eliminar</Button>
+                      </div>
                     </td>
                   </tr>
-                  {editingProducto?.id === producto.id && (
-                    <tr>
-                      <td colSpan="6">
-                        <Form>
-                          <Form.Group className="mb-3">
-                            <Form.Label>Nombre del Producto</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={editingProducto.nombreDelProducto}
-                              onChange={e => setEditingProducto({ ...editingProducto, nombreDelProducto: e.target.value })}
-                            />
-                          </Form.Group>
-                          <Form.Group className="mb-3">
-                            <Form.Label>Código EAN</Form.Label>
-                            <Form.Control
-                              type="number"
-                              value={editingProducto.codigoEan}
-                              onChange={e => setEditingProducto({ ...editingProducto, codigoEan: e.target.value })}
-                            />
-                          </Form.Group>
-                          <Form.Group className="mb-3">
-                            <Form.Label>Descripción del Producto</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={editingProducto.descripcionDelProducto}
-                              onChange={e => setEditingProducto({ ...editingProducto, descripcionDelProducto: e.target.value })}
-                            />
-                          </Form.Group>
-                          <Form.Group className="mb-3">
-                            <Form.Label>Marca</Form.Label>
-                            <Form.Control
-                              type="text"
-                              value={editingProducto.marcaArtesania}
-                              onChange={e => setEditingProducto({ ...editingProducto, marcaArtesania: e.target.value })}
-                            />
-                          </Form.Group>
-                          <Form.Group className="mb-3">
-                            <Form.Label>U.Disponibles</Form.Label>
-                            <Form.Control
-                              type="number"
-                              value={editingProducto.unidadesDisponibles}
-                              onChange={e => setEditingProducto({ ...editingProducto, unidadesDisponibles: e.target.value })}
-                            />
-                          </Form.Group>
-                          <Button variant="success" onClick={() => updateProducto(producto.id, editingProducto)}>Guardar Cambios</Button>
-                          <Button variant="secondary" onClick={() => setEditingProducto(null)}>Cancelar</Button>
-                        </Form>
-                      </td>
-                    </tr>
-                  )}
-                </>
-              ))}
-            </tbody>
-          </table>
-        </Col>
+                ))}
+              </tbody>
+            </table>
+          </Col>
         </Table>
-
       </Row>
     </Container>
   );
